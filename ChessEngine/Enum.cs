@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ChessEngine
 {
-    internal class Enum
+    public class Enum
     {
         public enum Colors { WHITE, BLACK };
-        enum PieceNames
+        public enum PieceNames
         {
             PIECE,
             KING,
@@ -20,7 +20,7 @@ namespace ChessEngine
             BISHOP
         }
 
-        enum ChessStatus
+        public enum ChessStatus
         {
             CHECK,
             CHECKMATE,
@@ -28,6 +28,14 @@ namespace ChessEngine
             WIN,
             LOSE,
             DRAW
+        }
+
+        public enum BoardParam
+        {
+            BOARD_SIZE = 8,
+            CELL_SIZE = 80,
+            OFFSET_X = 38,
+            OFFSET_Y = 38
         }
     }
 }
