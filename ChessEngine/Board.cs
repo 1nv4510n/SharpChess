@@ -99,17 +99,17 @@ namespace ChessEngine
             return cells[vertical.IndexOf(pgn[1])][horizontal.IndexOf(pgn[0])];
         }
 
-        public List<string> HighlightMoves(Cell selectedCell)
+        public List<Cell> HighlightMoves(Cell selectedCell)
         {
-            List<string> highlighted = new List<string>();
+            List<Cell> highlighted = new();
 
             if (selectedCell.piece is not null)
             {
                 if (selectedCell.piece.name == PieceNames.KING)
                 {
-                    foreach (string move in selectedCell.piece.GetAttackDirection())
+                    foreach (var move in selectedCell.piece.GetAttackDirection())
                     {
-                        if (selectedCell.piece.CanMove(this.GetCellFromPgn(move)))
+                        if (selectedCell.piece.CanMove(move))
                         {
                             highlighted.Add(move);
                         }
@@ -123,7 +123,7 @@ namespace ChessEngine
                         {
                             if (selectedCell.piece.CanMove(targetCell))
                             {
-                                highlighted.Add(targetCell.ToPgn());
+                                highlighted.Add(targetCell);
                             }
                         }
                     }
@@ -133,26 +133,26 @@ namespace ChessEngine
             return highlighted;
         }
 
-        public List<List<string>> GetAllMoves(Colors color)
+        public List<List<Cell>> GetAllMoves(Colors color)
         {
-            List<List<string>> moves = new List<List<string>>();
+            List<List<Cell>> moves = new();
 
             foreach (var row in cells)
             {
                 foreach (var targetCell in row)
                 {
-                    List<string> move = new List<string>();
+                    List<Cell> move = new();
 
                     if (targetCell.piece?.color == color)
                     {
-                        move.Add(targetCell.ToPgn());
-                        move.AddRange(this.HighlightMoves(targetCell));
+                        move.Add(targetCell);
+                        move.AddRange(HighlightMoves(targetCell));
                     }
+                    moves.Add(move);
                 } 
             }
-
+            
             return moves;
         }
-        
     }
 }

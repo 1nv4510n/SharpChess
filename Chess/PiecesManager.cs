@@ -11,19 +11,22 @@ using ChessEngine;
 
 using static ChessEngine.Enum;
 
-
 namespace Chess
 {
+
+    
     class PiecesManager
     {
         private List<PieceInfo> pieces = new List<PieceInfo>();
         private SelectedInfo? selectedPiece = null;
         private List<MoveInfo> selectedMoves = new List<MoveInfo>();
+        private ChessGame game;
         private Board board;
 
-        public PiecesManager(Board board)
+        public PiecesManager(ChessGame game)
         {
-            this.board = board;
+            this.game = game;
+            board = game.board;
         }
 
         public void UpdatePieces()
@@ -52,28 +55,31 @@ namespace Chess
                 foreach (var pieceInfo in pieces)
                 {
                     var mousePos = Mouse.GetPosition(window);
-                    if (pieceInfo.Sprite.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
+                    if (pieceInfo.Sprite.GetGlobalBounds().Contains(mousePos.X, mousePos.Y) && pieceInfo.Cell.piece.color == game.currentTurn.Color)
                     {
                         if (selectedPiece is null)
                         {
-                            RectangleShape border = new(new Vector2f((int)BoardParam.CELL_SIZE, (int)BoardParam.CELL_SIZE));
-
-                            border.Position = pieceInfo.Sprite.Position;
-                            border.FillColor = Color.Transparent;
-                            border.OutlineThickness = 4;
-                            border.OutlineColor = Color.Red;
+                            RectangleShape border = new(new Vector2f((int)BoardParam.CELL_SIZE, (int)BoardParam.CELL_SIZE))
+                            {
+                                Position = pieceInfo.Sprite.Position,
+                                FillColor = Color.Transparent,
+                                OutlineThickness = 4,
+                                OutlineColor = Color.Red
+                            };
                             selectedPiece = new SelectedInfo(pieceInfo.Cell, border);
                             selectedMoves.Clear();
 
                             foreach (var move in pieceInfo.Cell.board.HighlightMoves(pieceInfo.Cell))
                             {
-                                Cell cell = board.GetCellFromPgn(move);
+                                Cell cell = move;
                                 float posX = cell.x * ((int)BoardParam.CELL_SIZE) + (int)BoardParam.CELL_SIZE / 2 + (int)BoardParam.OFFSET_X / 2 + 8;
                                 float posY = cell.y * ((int)BoardParam.CELL_SIZE) + (int)BoardParam.CELL_SIZE / 2 + (int)BoardParam.OFFSET_Y / 2 + 5;
-                                CircleShape circle = new CircleShape();
-                                circle.Position = new Vector2f(posX, posY);
-                                circle.FillColor = Color.Green;
-                                circle.Radius = 10;
+                                CircleShape circle = new()
+                                {
+                                    Position = new Vector2f(posX, posY),
+                                    FillColor = Color.Green,
+                                    Radius = 10
+                                };
                                 selectedMoves.Add(new MoveInfo(cell, circle));
                             }
                         }
@@ -99,7 +105,7 @@ namespace Chess
                         var mousePos = Mouse.GetPosition(window);
                         if (moveInfo.Circle.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
                         {
-                            selectedPiece?.Cell.MovePiece(moveInfo.Cell);
+                            game.MovePiece(selectedPiece?.Cell, moveInfo.Cell);
                             selectedPiece = null;
                             selectedMoves.Clear();
                             UpdatePieces();

@@ -9,8 +9,8 @@ namespace Chess
         public Sprite Sprite { get; set; }
         public PieceInfo(Cell cell, Sprite sprite)
         {
-            this.Cell = cell;
-            this.Sprite = sprite;
+            Cell = cell;
+            Sprite = sprite;
         }
     }
 
@@ -20,8 +20,8 @@ namespace Chess
         public RectangleShape Shape { get; set; }
         public SelectedInfo(Cell cell, RectangleShape shape)
         {
-            this.Cell = cell;
-            this.Shape = shape;
+            Cell = cell;
+            Shape = shape;
         }
     }
 
@@ -31,8 +31,8 @@ namespace Chess
         public CircleShape Circle { get; set; }
         public MoveInfo(Cell cell, CircleShape circle)
         {
-            this.Cell = cell;
-            this.Circle = circle;
+            Cell = cell;
+            Circle = circle;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace ChessEngine
     public class Enum
     {
         public enum Colors { WHITE, BLACK };
+        public enum PlayerType { HUMAN, COMPUTER };
         public enum PieceNames
         {
             PIECE,

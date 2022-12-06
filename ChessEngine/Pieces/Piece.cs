@@ -11,7 +11,7 @@ namespace ChessEngine.Pieces
     public class Piece
     {
         internal Cell cell;
-        internal Colors color;
+        public Colors color;
         public string logo;
         internal PieceNames name;
 
@@ -60,9 +60,9 @@ namespace ChessEngine.Pieces
             return false;
         }
 
-        internal virtual List<string> GetAttackDirection()
+        internal virtual List<Cell> GetAttackDirection()
         {
-            return new List<string>();
+            return new();
         }
 
         internal virtual void MovePiece()

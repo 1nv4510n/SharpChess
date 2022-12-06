@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using ChessEngine;
 using SFML.Graphics;
-using SFML.System;
 using SFML.Window;
-using ChessEngine;
+
+using static ChessEngine.PlayerStruct;
+using static ChessEngine.Enum;
 
 
 namespace Chess
@@ -15,53 +15,55 @@ namespace Chess
         private const string TITLE = "Chess";
         private RenderWindow window;
         private VideoMode mode = new VideoMode(WIDTH, HEIGHT);
-        
+
         private Sprite background;
-        private Board board = new();
+        private ChessGame game;
         private PiecesManager piecesManager;
 
         public Game()
         {
-            this.window = new RenderWindow(this.mode, TITLE);
+            window = new RenderWindow(mode, TITLE);
 
-            this.window.SetFramerateLimit(30);
-            this.window.Closed += (sender, args) => {
-                this.window.Close();
+            window.SetFramerateLimit(30);
+            window.Closed += (sender, args) =>
+            {
+                window.Close();
             };
             background = SpriteManager.LoadSprite(@"\logo\pure_board.png");
 
-            board.AddPieces();
-            piecesManager = new PiecesManager(board);
-        }
+            Player human = new(Colors.WHITE, PlayerType.HUMAN);
+            Player bot = new(Colors.BLACK, PlayerType.COMPUTER);
 
-        public void Run()
-        {
-            this.piecesManager.UpdatePieces();
-            while (this.window.IsOpen)
-            {
-                // handle
-                this.HandleEvents();
-                this.Update();
-                this.Draw();
-            }
+            game = new(human, bot);
+            piecesManager = new PiecesManager(game);
         }
 
         private void HandleEvents()
         {
-            this.window.DispatchEvents();
+            window.DispatchEvents();
         }
-        private void Update() 
+        private void Update()
         {
-            this.piecesManager.MouseHandler(window);
-            this.piecesManager.MovePieceHandler(window);
+            piecesManager.MouseHandler(window);
+            piecesManager.MovePieceHandler(window);
         }
 
         private void Draw()
         {
-            this.window.Clear(Color.Blue);
-            this.window.Draw(this.background);
-            this.piecesManager.Draw(window);
-            this.window.Display();
+            window.Clear(Color.Blue);
+            window.Draw(background);
+            piecesManager.Draw(window);
+            window.Display();
+        }
+        public void Run()
+        {
+            piecesManager.UpdatePieces();
+            while (window.IsOpen)
+            {
+                HandleEvents();
+                Update();
+                Draw();
+            }
         }
     }
 }

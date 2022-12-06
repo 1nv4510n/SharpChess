@@ -104,9 +104,9 @@ namespace ChessEngine
             return true;
         }
 
-        internal List<string> GetPathToCell(Cell targetCell)
+        internal List<Cell> GetPathToCell(Cell targetCell)
         {
-            List<string> path = new List<string>();
+            List<Cell> path = new();
 
             int absX = Math.Abs(targetCell.x - this.x);
             int absY = Math.Abs(targetCell.y - this.y);
@@ -117,7 +117,7 @@ namespace ChessEngine
                 int maxYValue = Math.Max(this.y, targetCell.y);
                 for (int y = minYValue + 1; y < maxYValue; y++)
                 {
-                    path.Add(this.board.GetCell(this.x, y).ToPgn());
+                    path.Add(this.board.GetCell(this.x, y));
                 }
             } 
             else if (this.y == targetCell.y)
@@ -126,7 +126,7 @@ namespace ChessEngine
                 int maxXValue = Math.Max(this.x, targetCell.x);
                 for (int x = minXValue + 1; y < maxXValue; x++)
                 {
-                    path.Add(this.board.GetCell(x, this.y).ToPgn());
+                    path.Add(this.board.GetCell(x, this.y));
                 }
             }
             else if (absX == absY)
@@ -136,7 +136,7 @@ namespace ChessEngine
 
                 for (int i = 0; i < absY + 1; i++)
                 {
-                    path.Add(this.board.GetCell(this.x + dx * i, this.y + dy * i).ToPgn());
+                    path.Add(this.board.GetCell(this.x + dx * i, this.y + dy * i));
                 }
             }
 
@@ -179,7 +179,7 @@ namespace ChessEngine
                         }
 
                         if (checkCell.piece.name == PieceNames.PAWN 
-                            && checkCell.piece.GetAttackDirection().Contains(this.ToPgn()))
+                            && checkCell.piece.GetAttackDirection().Contains(this))
                         {
                             return true;
                         }
@@ -206,7 +206,7 @@ namespace ChessEngine
                         }
 
                         if (checkCell.piece.name == PieceNames.KING
-                            && checkCell.piece.GetAttackDirection().Contains(this.ToPgn()))
+                            && checkCell.piece.GetAttackDirection().Contains(this))
                         {
                             return true;
                         }

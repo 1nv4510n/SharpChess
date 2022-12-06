@@ -30,7 +30,7 @@ namespace ChessEngine.Pieces
             int direction = this.color == Colors.BLACK ? 1 : -1;
             int firstStepDirection = direction * 2;
 
-            if ((targetCell.y == this.cell.y + direction || (this.isFirstStep && targetCell.y == this.cell.y + firstStepDirection)) 
+            if ((targetCell.y == this.cell.y + direction || (this.isFirstStep && (targetCell.y == this.cell.y + firstStepDirection && this.cell.IsEmptyVertical(targetCell))))
                 && targetCell.x == this.cell.x 
                 && this.cell.board.GetCell(targetCell.x, targetCell.y).IsEmpty())
             {
@@ -46,12 +46,12 @@ namespace ChessEngine.Pieces
             return false;
         }
 
-        internal override List<string> GetAttackDirection()
+        internal override List<Cell> GetAttackDirection()
         {
             int direction = this.color == Colors.BLACK ? 1 : -1;
-            List<string> attacks = new List<string>();
+            List<Cell> attacks = new();
 
-            var addFunc = (int xOffset) => this.cell.board.GetCell(this.cell.x + xOffset, this.cell.y + direction).ToPgn();
+            var addFunc = (int xOffset) => this.cell.board.GetCell(this.cell.x + xOffset, this.cell.y + direction);
             if (this.cell.x == 0)
             {
                 attacks.Add(addFunc(1));
