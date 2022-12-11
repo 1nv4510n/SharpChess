@@ -8,7 +8,7 @@ using static ChessEngine.Enum;
 
 namespace ChessEngine
 {
-    public class PlayerStruct
+    public class ChessStruct
     {
         public struct Player
         {
@@ -43,6 +43,20 @@ namespace ChessEngine
             public static bool operator !=(Player p1, Player p2)
             {
                 return !(p1 == p2);
+            }
+        }
+
+        public struct Move
+        {
+            public Colors Color { get; set; }
+            public Cell SourceCell { get; set; }
+            public Cell TargetCell { get; set; }
+
+            public Move(Colors color, Cell sourceCell, Cell targetCell)
+            {
+                Color = color;
+                SourceCell = sourceCell;
+                TargetCell = targetCell;
             }
         }
     }

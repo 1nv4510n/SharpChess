@@ -15,7 +15,7 @@ namespace ChessEngine
         public int y;
         internal readonly Colors color;
         public readonly Board board;
-        public Piece piece;
+        public Piece? piece;
 
         public Cell(Board board, int x, int y, Colors color, Piece? piece)
         {
@@ -47,7 +47,7 @@ namespace ChessEngine
         {
             if (targetCell.piece is not null)
             {
-                return targetCell.piece.color != this.piece.color;
+                return targetCell.piece.color != this.piece?.color;
             }
             return false;
         }
@@ -124,7 +124,7 @@ namespace ChessEngine
             {
                 int minXValue = Math.Min(this.x, targetCell.x);
                 int maxXValue = Math.Max(this.x, targetCell.x);
-                for (int x = minXValue + 1; y < maxXValue; x++)
+                for (int x = minXValue + 1; x < maxXValue; x++)
                 {
                     path.Add(this.board.GetCell(x, this.y));
                 }
@@ -155,7 +155,7 @@ namespace ChessEngine
             {
                 targetCell.SetPiece(this.piece);
                 this.piece = null;
-                targetCell.piece.MovePiece();
+                targetCell.piece?.MovePiece();
             }
         }
 

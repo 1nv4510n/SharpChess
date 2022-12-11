@@ -20,15 +20,8 @@ namespace ChessEngine.Pieces
 
         internal override bool CanMove(Cell targetCell, bool supportCheck = false)
         {
-            if (!base.CanMove(targetCell, supportCheck))
-            {
-                return false;
-            }
-            if (this.cell.IsEmptyDiagonal(targetCell))
-            {
-                return true;
-            }
-
+            if (!base.CanMove(targetCell, supportCheck)) return false;
+            if (this.cell.IsEmptyDiagonal(targetCell)) return true;
             return false;
         }
     }

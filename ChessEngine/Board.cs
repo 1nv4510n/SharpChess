@@ -37,54 +37,62 @@ namespace ChessEngine
         {
             for (int i = 0; i < 8; i++)
             {
-                new Pawn(this.GetCell(i, 1), Colors.BLACK);
-                new Pawn(this.GetCell(i, 6), Colors.WHITE);
+                _ = new Pawn(this.GetCell(i, 1), Colors.BLACK);
+                _ = new Pawn(this.GetCell(i, 6), Colors.WHITE);
             }
         }
 
         private void AddRooks()
         {
-            new Rook(this.GetCell(0, 0), Colors.BLACK);
-            new Rook(this.GetCell(7, 0), Colors.BLACK);
-            new Rook(this.GetCell(0, 7), Colors.WHITE);
-            new Rook(this.GetCell(7, 7), Colors.WHITE);
+            _ = new Rook(this.GetCell(0, 0), Colors.BLACK);
+            _ = new Rook(this.GetCell(7, 0), Colors.BLACK);
+            _ = new Rook(this.GetCell(0, 7), Colors.WHITE);
+            _ = new Rook(this.GetCell(7, 7), Colors.WHITE);
         }
 
         private void AddKnights()
         {
-            new Knight(this.GetCell(1, 0), Colors.BLACK);
-            new Knight(this.GetCell(6, 0), Colors.BLACK);
-            new Knight(this.GetCell(1, 7), Colors.WHITE);
-            new Knight(this.GetCell(6, 7), Colors.WHITE);
+            _ = new Knight(this.GetCell(1, 0), Colors.BLACK);
+            _ = new Knight(this.GetCell(6, 0), Colors.BLACK);
+            _ = new Knight(this.GetCell(1, 7), Colors.WHITE);
+            _ = new Knight(this.GetCell(6, 7), Colors.WHITE);
         }
 
         private void AddBishops()
         {
-            new Bishop(this.GetCell(2, 0), Colors.BLACK);
-            new Bishop(this.GetCell(5, 0), Colors.BLACK);
-            new Bishop(this.GetCell(2, 7), Colors.WHITE);
-            new Bishop(this.GetCell(5, 7), Colors.WHITE);
+            _ = new Bishop(this.GetCell(2, 0), Colors.BLACK);
+            _ = new Bishop(this.GetCell(5, 0), Colors.BLACK);
+            _ = new Bishop(this.GetCell(2, 7), Colors.WHITE);
+            _ = new Bishop(this.GetCell(5, 7), Colors.WHITE);
         }
 
         private void AddQueens()
         {
-            new Queen(this.GetCell(3, 0), Colors.BLACK);
-            new Queen(this.GetCell(3, 7), Colors.WHITE);
+            _ = new Queen(this.GetCell(3, 0), Colors.BLACK);
+            _ = new Queen(this.GetCell(3, 7), Colors.WHITE);
         }
         private void AddKings()
         {
-            new King(this.GetCell(4, 0), Colors.BLACK);
-            new King(this.GetCell(4, 7), Colors.WHITE);
+            _ = new King(this.GetCell(4, 0), Colors.BLACK);
+            _ = new King(this.GetCell(4, 7), Colors.WHITE);
         }
 
         public void AddPieces()
         {
-            this.AddPawns();
-            this.AddRooks();
-            this.AddKnights();
-            this.AddQueens();
-            this.AddKings();
-            this.AddBishops();
+            AddPawns();
+            AddRooks();
+            AddKnights();
+            AddQueens();
+            AddKings();
+            AddBishops();
+        }
+
+        public void InitTestPlacement()
+        {
+            _ = new King(this.GetCellFromPgn("c1"), Colors.BLACK);
+            _ = new King(this.GetCellFromPgn("b3"), Colors.WHITE);
+            _ = new Queen(this.GetCellFromPgn("c5"), Colors.BLACK);
+            _ = new Rook(this.GetCellFromPgn("g4"), Colors.BLACK);
         }
 
         internal Cell GetCell (int x, int y)
@@ -137,6 +145,12 @@ namespace ChessEngine
         {
             List<List<Cell>> moves = new();
 
+            var kingEscapeMoves = KingEscapeMoves(color);
+            if (kingEscapeMoves.Any())
+            {
+                return kingEscapeMoves;
+            }
+
             foreach (var row in cells)
             {
                 foreach (var targetCell in row)
@@ -145,14 +159,179 @@ namespace ChessEngine
 
                     if (targetCell.piece?.color == color)
                     {
-                        move.Add(targetCell);
-                        move.AddRange(HighlightMoves(targetCell));
+                        var targetCellMoves = HighlightMoves(targetCell);
+                        if (targetCellMoves.Any())
+                        {
+                            move.Add(targetCell);
+                            move.AddRange(targetCellMoves);
+                            moves.Add(move);
+                        }
                     }
-                    moves.Add(move);
                 } 
             }
             
             return moves;
+        }
+
+        public List<Cell> GetPieces(PieceNames name, Colors color)
+        {
+            List<Cell> pieceList = new();
+            foreach (var row in this.cells)
+            {
+                foreach (var checkCell in row)
+                {
+                    if (checkCell.piece?.color == color && checkCell.piece?.name == name)
+                    {
+                        pieceList.Add(checkCell);
+                    }
+                }
+            }
+            return pieceList;
+        }
+
+        public List<Cell> KingIsUnderCheck(Colors color)
+        {
+            List<Cell> checkPieces = new();
+            Cell king = GetPieces(PieceNames.KING, color)[0];
+            Colors oppositeColor = color == Colors.WHITE ? Colors.BLACK : Colors.WHITE;
+            
+            foreach (var row in this.cells)
+            {
+                foreach (var checkCell in row)
+                {
+                    if (checkCell.piece?.color == oppositeColor)
+                    {
+                        if (checkCell.piece.name == PieceNames.KNIGHT)
+                        {
+                            int dx = Math.Abs(checkCell.x - king.x);
+                            int dy = Math.Abs(checkCell.y - king.y);
+                            if ((dx == 1 && dy == 2) || (dx == 2 && dy == 1))
+                            {
+                                checkPieces.Add(checkCell);
+                                continue;
+                            }
+                        }
+                        if (checkCell.piece.name == PieceNames.PAWN)
+                        {
+                            if (checkCell.piece.GetAttackDirection().Contains(king))
+                            {
+                                checkPieces.Add(checkCell);
+                                continue;
+                            }
+                        }
+                        if (checkCell.piece.name == PieceNames.QUEEN)
+                        {
+                            if (king.IsEmptyVertical(checkCell) 
+                                || king.IsEmptyHorizontal(checkCell) 
+                                || king.IsEmptyDiagonal(checkCell))
+                            {
+                                checkPieces.Add(checkCell);
+                                continue;
+                            }
+                        }
+                        if (checkCell.piece.name == PieceNames.ROOK)
+                        {
+                            if (king.IsEmptyVertical(checkCell) || king.IsEmptyHorizontal(checkCell))
+                            {
+                                checkPieces.Add(checkCell);
+                                continue;
+                            }
+                        }
+                        if (checkCell.piece.name == PieceNames.BISHOP)
+                        {
+                            if (king.IsEmptyDiagonal(checkCell))
+                            {
+                                checkPieces.Add(checkCell);
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+            return checkPieces;
+        }
+
+        public List<List<Cell>> KingEscapeMoves(Colors color)
+        {
+            Cell king = GetPieces(PieceNames.KING, color).First();
+            var checkSource = KingIsUnderCheck(color);
+            List<List<Cell>> escapeMoves = new();
+            if (checkSource.Any())
+            {
+                var kingMoves = HighlightMoves(king);
+                if (kingMoves.Any())
+                {
+                    kingMoves.Insert(0, king);
+                    escapeMoves.Add(kingMoves);
+                }
+
+                if (checkSource.Count == 1)
+                {
+                    List<Cell> attackLines = new();
+                    foreach (var attacker in checkSource)
+                    {
+                        if (attacker.piece?.name != PieceNames.KING)
+                        {
+                            if (attacker.piece?.name == PieceNames.PAWN || attacker.piece?.name == PieceNames.KNIGHT)
+                            {
+                                attackLines.Add(attacker);
+                            } else
+                            {
+                                attackLines.AddRange(king.GetPathToCell(attacker));
+                            }
+                        }
+                    }
+
+                    foreach (var row in this.cells)
+                    {
+                        foreach (var checkcell in row)
+                        {
+                            if (checkcell.piece?.color == color && checkcell.piece?.name != PieceNames.KING)
+                            {
+                                var checkCellMoves = HighlightMoves(checkcell);
+                                foreach (var move in checkCellMoves)
+                                {
+                                    if (attackLines.Contains(move))
+                                    {
+                                        escapeMoves.Add(new List<Cell> { checkcell, move });
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return escapeMoves;
+                } 
+                else
+                {
+                    return escapeMoves;
+                }
+            } else
+            {
+                return escapeMoves;
+            }
+        }
+
+        public bool IsCheckmate(Colors color)
+        {
+            return !KingEscapeMoves(color).Any();
+        }
+
+        public bool IsStalemate(Colors color)
+        {
+            int countPieces = 0;
+            foreach (var row in cells)
+            {
+                foreach (var cell in row)
+                {
+                    if (cell.piece is not null)
+                    {
+                        countPieces += 1;
+                    }
+                }
+            }
+            if (countPieces == 2) return true;
+            return (!KingIsUnderCheck(color).Any() && !GetAllMoves(color).Any());
         }
     }
 }

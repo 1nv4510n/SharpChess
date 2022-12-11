@@ -31,6 +31,15 @@ namespace ChessEngine
             DRAW
         }
 
+        public enum ChessEvents
+        {
+            MOVE,
+            TAKE,
+            CHECK,
+            CHECKMATE,
+            STALEMATE
+        }
+
         public enum BoardParam
         {
             BOARD_SIZE = 8,

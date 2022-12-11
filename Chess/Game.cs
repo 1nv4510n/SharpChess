@@ -1,8 +1,9 @@
 ﻿using ChessEngine;
 using SFML.Graphics;
 using SFML.Window;
+using SFML.System;
 
-using static ChessEngine.PlayerStruct;
+using static ChessEngine.ChessStruct;
 using static ChessEngine.Enum;
 
 
@@ -19,6 +20,7 @@ namespace Chess
         private Sprite background;
         private ChessGame game;
         private PiecesManager piecesManager;
+        private TextManager textManager;
 
         public Game()
         {
@@ -34,8 +36,10 @@ namespace Chess
             Player human = new(Colors.WHITE, PlayerType.HUMAN);
             Player bot = new(Colors.BLACK, PlayerType.COMPUTER);
 
-            game = new(human, bot);
+            game = new ChessGame(human, bot);
             piecesManager = new PiecesManager(game);
+            textManager = new TextManager(game, "fonts/NotoSans.ttf");
+
         }
 
         private void HandleEvents()
@@ -44,8 +48,18 @@ namespace Chess
         }
         private void Update()
         {
-            piecesManager.MouseHandler(window);
-            piecesManager.MovePieceHandler(window);
+            if (!game.isGameOver)
+            {
+                piecesManager.MouseHandler(window);
+                piecesManager.MovePieceHandler(window);
+                var e = game.ComputerMove();
+                if (e is not null)
+                {
+                    piecesManager.UpdatePieces();
+                    SoundManager.PlaySound(e);
+                }
+            }
+            textManager.Update();
         }
 
         private void Draw()
@@ -53,6 +67,7 @@ namespace Chess
             window.Clear(Color.Blue);
             window.Draw(background);
             piecesManager.Draw(window);
+            textManager.Draw(window);
             window.Display();
         }
         public void Run()

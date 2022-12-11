@@ -38,20 +38,44 @@ namespace ChessEngine.Pieces
             int dy = Math.Abs(this.cell.y - targetCell.y);
             Colors enemyColor = this.color == Colors.WHITE ? Colors.BLACK : Colors.WHITE;
 
-            if (targetCell.IsAttacked(enemyColor))
-            {
-                return false;
-            }
-            if (targetCell.piece is not null && targetCell.piece.IsSupported())
-            {
-                return false;
-            }
-
+            if (targetCell.IsAttacked(enemyColor)) return false;
+            if (targetCell.piece is not null && targetCell.piece.IsSupported()) return false;
             if ((dx == 1 && dy == 0) || (dx == 0 && dy == 1) || (dx == 1 && dy == 1))
             {
                 return true;
             }
             return false;
+        }
+
+        internal override List<Cell> GetAttackDirection()
+        {
+            List<Cell> pos = new();
+            foreach (var row in cell.board.cells)
+            {
+                foreach (var checkCell in row)
+                {
+                    int dx = Math.Abs(this.cell.x - checkCell.x);
+                    int dy = Math.Abs(this.cell.y - checkCell.y);
+                    if (dx >= 2 || dy >= 2) continue;
+                    if ((dx == 1 && dy == 1) || (dx == 0 && dy == 1) || (dx == 1 && dy == 0))
+                    {
+                        pos.Add(checkCell);
+                    }
+                }
+            }
+            if (isFirstStep)
+            {
+                if (this.color == Colors.WHITE)
+                {
+                    pos.Add(cell.board.GetCellFromPgn("c1"));
+                    pos.Add(cell.board.GetCellFromPgn("g1"));
+                } else
+                {
+                    pos.Add(cell.board.GetCellFromPgn("c8"));
+                    pos.Add(cell.board.GetCellFromPgn("g8"));
+                }
+            }
+            return pos;
         }
     }
 }
