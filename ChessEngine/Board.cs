@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ChessEngine.Pieces;
 
 using static ChessEngine.Enum;
-using ChessEngine.Pieces;
+using static ChessEngine.ChessStruct;
 
 namespace ChessEngine
 {
@@ -170,6 +171,26 @@ namespace ChessEngine
                 } 
             }
             
+            return moves;
+        }
+
+        public List<Move> GetUglyMoves(Colors color)
+        {
+            List<Move> moves = new();
+            foreach (var row in cells)
+            {
+                foreach (var sourceCell in row)
+                {
+                    if (sourceCell.piece?.color == color)
+                    {
+                        foreach (var targetCellMove in HighlightMoves(sourceCell))
+                        {
+                            Move move = new Move(color, sourceCell, targetCellMove);
+                            moves.Add(move);
+                        }
+                    }
+                }
+            }
             return moves;
         }
 

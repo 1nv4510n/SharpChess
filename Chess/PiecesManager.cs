@@ -106,6 +106,26 @@ namespace Chess
                 }
             }
         }
+
+        public void UndoMoveHandler()
+        {
+            if (Keyboard.IsKeyPressed(Keyboard.Key.U))
+            {
+                SoundManager.PlaySound(game.UndoMove());
+                UpdatePieces();
+                Thread.Sleep(100);
+            }
+        }
+
+        public void RestartGameHandler()
+        {
+            if (Keyboard.IsKeyPressed(Keyboard.Key.R))
+            {
+                game.RestartGame();
+                UpdatePieces();
+                Thread.Sleep(100);
+            }
+        }
         
         public void Draw(RenderTarget window)
         {

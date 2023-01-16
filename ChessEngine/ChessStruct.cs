@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessEngine.Pieces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,27 @@ namespace ChessEngine
                 Color = color;
                 SourceCell = sourceCell;
                 TargetCell = targetCell;
+            }
+
+            public override string ToString()
+            {
+                return $"{SourceCell.ToPgn()} ({SourceCell.piece?.name}) -> {TargetCell.ToPgn()}";
+            }
+
+        }
+
+        public struct PreviousTurn
+        {
+            public Cell SourceCell { get; set; }
+            public Cell TargetCell { get; set; }
+            public Piece MovedPiece { get; set; }
+            public Piece? CapturedPiece { get; set; }
+            public PreviousTurn(Cell sourceCell, Cell targetCell, Piece movedPiece, Piece? capturedPiece)
+            {
+                SourceCell = sourceCell;
+                TargetCell = targetCell;
+                CapturedPiece = capturedPiece;
+                MovedPiece = movedPiece;
             }
         }
     }

@@ -12,7 +12,6 @@ namespace ChessEngine.Pieces
     {
         private const string whiteLogo = @"\logo\white_king.png";
         private const string blackLogo = @"\logo\black_king.png";
-        internal bool isFirstStep = true;
 
         public King(Cell cell, Colors color) : base(cell, color)
         {

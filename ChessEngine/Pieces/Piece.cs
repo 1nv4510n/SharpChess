@@ -9,12 +9,13 @@ using static ChessEngine.Enum;
 
 namespace ChessEngine.Pieces
 {
-    public abstract class Piece
+    public abstract class Piece : ICloneable
     {
         internal Cell cell;
         public Colors color;
         public string? logo;
         internal PieceNames name;
+        internal bool isFirstStep = true;
 
         public Piece(Cell cell, Colors color)
         {
@@ -24,6 +25,8 @@ namespace ChessEngine.Pieces
             this.name = PieceNames.PIECE;
             this.logo = null;
         }
+
+        public object Clone() => MemberwiseClone();
 
         internal virtual bool CanMove(Cell targetCell, bool supportCheck = false)
         {

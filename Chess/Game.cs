@@ -52,6 +52,7 @@ namespace Chess
             {
                 piecesManager.MouseHandler(window);
                 piecesManager.MovePieceHandler(window);
+                piecesManager.UndoMoveHandler();
                 var e = game.ComputerMove();
                 if (e is not null)
                 {
@@ -59,6 +60,7 @@ namespace Chess
                     SoundManager.PlaySound(e);
                 }
             }
+            piecesManager.RestartGameHandler();
             textManager.Update();
         }
 

@@ -44,6 +44,9 @@ namespace Chess
                 {
                     text.DisplayedString = "GAME OVER\nDRAW\nSTALEMATE";
                 }
+            } else
+            {
+                text.DisplayedString = "";
             }
         }
 
